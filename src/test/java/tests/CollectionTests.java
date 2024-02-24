@@ -4,13 +4,11 @@ import api.AuthorisationApi;
 import api.BooksApi;
 import models.loginModel.LoginResponseModel;
 import org.junit.jupiter.api.Test;
-
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selectors.byText;
-import static com.codeborne.selenide.Selenide.*;
+import pages.PageObject;
 import static io.qameta.allure.Allure.step;
 
 public class CollectionTests extends TestBase {
+    PageObject pageObject = new PageObject();
     @Test
     void deleteBookTest() {
 
@@ -27,31 +25,25 @@ public class CollectionTests extends TestBase {
         );
 
         step("Принимаем соглашение о куках", () -> {
-            if ($(".fc-consent-root").isDisplayed()) {
-                $(".fc-consent-root").$(byText("Consent")).click();
-            }
+            pageObject.consentRoot();
         });
 
         step("Открываем Profile", () ->
-                open("/profile")
+                pageObject.openPage()
         );
 
         step("Проверяем, что книга есть в корзине", () ->
-                $(".ReactTable").shouldHave(text("Understanding ECMAScript 6"))
+                pageObject.checkReactTablaHaveBook("Understanding ECMAScript 6")
         );
 
 
-        step("Нажимаем на иконку корзины", () ->
-                $("#delete-record-undefined").click()
+        step("Удаляем книгу", () ->
+                pageObject.deleteBook()
         );
 
-        step("Подтверждаем удаление", () ->
-                $("#closeSmallModal-ok").click()
-        );
 
         step("Проверяем, что книги нет в profile", () ->
-                $(".ReactTable").shouldNotHave(text("Understanding ECMAScript 6"))
+                pageObject.checkReactTablaNotHaveBook("Understanding ECMAScript 6")
         );
-
     }
 }
